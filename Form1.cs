@@ -77,30 +77,62 @@ namespace Tankeschön
 
         private async void BtnSuche_Click(object sender, EventArgs e)
         {
-            string postleitzahl = TxtOrt1.Text;
-            if (string.IsNullOrWhiteSpace(postleitzahl))
+            string ort1 = TxtOrt1.Text == "Ort/PLZ" ? null : TxtOrt1.Text;
+            string ort2 = txtOrt2.Text == "Ort/PLZ" ? null : txtOrt2.Text;
+
+            if(string.IsNullOrWhiteSpace(ort1) && string.IsNullOrWhiteSpace(ort2))
             {
-                MessageBox.Show("Bitte eine gültige Postleitzahl eingeben.");
+                MessageBox.Show("Mindestens ein Feld muss Ort oder PLZ beinhalten");
                 return;
             }
 
             try
             {
-                var (latitude, longitude) = await apiService.GetCoordinatesAsync(postleitzahl);
-                var stations = await apiService.GetTankstellenAsync(latitude, longitude, (double)NUDRadius.Value);
-
-                if (stations.Count == 0)
+                List<Tankstelle> allStations = new List<Tankstelle>();
+                double? lat1 = null, lng1 = null, lat2 = null, lng2 = null;
+                // Ergebnisse für Ort 1
+                if (!string.IsNullOrWhiteSpace(ort1))
                 {
-                    MessageBox.Show("Keine Tankstelle im Umkreis gefunden.");
-                    return;
+                    (lat1, lng1) = await apiService.GetCoordinatesAsync(ort1);
+                    var stationsOrt1 = await apiService.GetTankstellenAsync(lat1.Value, lng1.Value, (double)NUDRadius.Value);
+
+                    // Ergebnisse für Ort 1 anzeigen
+                    if (stationsOrt1.Count > 0)
+                    {
+                        allStations.AddRange(stationsOrt1);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Keine Tankstellen im Umkreis von Ort 1 gefunden.");
+                    }
                 }
 
-                DGVTankstellen.DataSource = null;
-                DGVTankstellen.AutoGenerateColumns = true;
-                DGVTankstellen.DataSource = stations;
+                // Ergebnisse für Ort 2
+                if (!string.IsNullOrWhiteSpace(ort2))
+                {
+                    (lat2, lng2) = await apiService.GetCoordinatesAsync(ort2);
+                    var stationsOrt2 = await apiService.GetTankstellenAsync(lat2.Value, lng2.Value, (double)NUDRadius.Value);
 
-                string selectedFuel = CbSpritsorte.SelectedItem.ToString();
-                mapHelper.UpdateMap(latitude, longitude, stations, selectedFuel);
+                    // Ergebnisse für Ort 2 anzeigen
+                    if (stationsOrt2.Count > 0)
+                    {
+                        allStations.AddRange(stationsOrt2);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Keine Tankstellen im Umkreis von Ort 2 gefunden.");
+                    }
+                }
+
+                if (allStations.Count > 0)
+                {
+                    DGVTankstellen.DataSource = null;
+                    DGVTankstellen.AutoGenerateColumns = true;
+                    DGVTankstellen.DataSource = allStations;
+
+                    string selectedFuel = CbSpritsorte.SelectedItem.ToString();
+                    mapHelper.UpdateMap2Orte(lat1, lng1, lat2, lng2, allStations, selectedFuel);
+                }
             }
             catch (Exception ex)
             {
