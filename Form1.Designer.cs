@@ -31,7 +31,8 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Tankeschön));
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.TxtOrt1 = new System.Windows.Forms.TextBox();
-            this.txtOrt2 = new System.Windows.Forms.TextBox();
+
+            this.TxtOrt2 = new System.Windows.Forms.TextBox();
             this.CbSpritsorte = new System.Windows.Forms.ComboBox();
             this.NUDRadius = new System.Windows.Forms.NumericUpDown();
             this.BtnSuche = new System.Windows.Forms.Button();
@@ -52,9 +53,10 @@
             // flowLayoutPanel1
             // 
             this.flowLayoutPanel1.AllowDrop = true;
-            this.flowLayoutPanel1.BackColor = System.Drawing.Color.SpringGreen;
+
+            this.flowLayoutPanel1.BackColor = System.Drawing.Color.Coral;
             this.flowLayoutPanel1.Controls.Add(this.TxtOrt1);
-            this.flowLayoutPanel1.Controls.Add(this.txtOrt2);
+            this.flowLayoutPanel1.Controls.Add(this.TxtOrt2);
             this.flowLayoutPanel1.Controls.Add(this.CbSpritsorte);
             this.flowLayoutPanel1.Controls.Add(this.NUDRadius);
             this.flowLayoutPanel1.Controls.Add(this.BtnSuche);
@@ -71,14 +73,17 @@
             this.TxtOrt1.Margin = new System.Windows.Forms.Padding(3, 25, 3, 3);
             this.TxtOrt1.Name = "TxtOrt1";
             this.TxtOrt1.Size = new System.Drawing.Size(133, 22);
-            this.TxtOrt1.TabIndex = 0;
+
+            this.TxtOrt1.TabIndex = 2;
+            this.TxtOrt1.TextChanged += new System.EventHandler(this.TxtOrt1_TextChanged);
             // 
-            // txtOrt2
+            // TxtOrt2
             // 
-            this.txtOrt2.Location = new System.Drawing.Point(3, 53);
-            this.txtOrt2.Name = "txtOrt2";
-            this.txtOrt2.Size = new System.Drawing.Size(133, 22);
-            this.txtOrt2.TabIndex = 1;
+            this.TxtOrt2.Location = new System.Drawing.Point(3, 53);
+            this.TxtOrt2.Name = "TxtOrt2";
+            this.TxtOrt2.Size = new System.Drawing.Size(133, 22);
+            this.TxtOrt2.TabIndex = 1;
+
             // 
             // CbSpritsorte
             // 
@@ -86,7 +91,8 @@
             this.CbSpritsorte.Location = new System.Drawing.Point(3, 81);
             this.CbSpritsorte.Name = "CbSpritsorte";
             this.CbSpritsorte.Size = new System.Drawing.Size(133, 24);
-            this.CbSpritsorte.TabIndex = 2;
+            this.CbSpritsorte.TabIndex = 4;
+
             // 
             // NUDRadius
             // 
@@ -121,7 +127,9 @@
             this.BtnSuche.Location = new System.Drawing.Point(3, 139);
             this.BtnSuche.Name = "BtnSuche";
             this.BtnSuche.Size = new System.Drawing.Size(133, 51);
-            this.BtnSuche.TabIndex = 4;
+
+            this.BtnSuche.TabIndex = 0;
+
             this.BtnSuche.Text = "Sparen";
             this.BtnSuche.UseVisualStyleBackColor = false;
             this.BtnSuche.Click += new System.EventHandler(this.BtnSuche_Click);
@@ -180,7 +188,9 @@
             this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button1.ForeColor = System.Drawing.SystemColors.Control;
-            this.button1.Location = new System.Drawing.Point(873, 3);
+
+            this.button1.Location = new System.Drawing.Point(885, 3);
+
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(37, 26);
             this.button1.TabIndex = 0;
@@ -194,7 +204,9 @@
             this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button2.ForeColor = System.Drawing.SystemColors.Control;
-            this.button2.Location = new System.Drawing.Point(830, 3);
+
+            this.button2.Location = new System.Drawing.Point(842, 3);
+
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(37, 26);
             this.button2.TabIndex = 1;
@@ -212,7 +224,8 @@
             this.FlowPanel.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
             this.FlowPanel.Location = new System.Drawing.Point(0, 0);
             this.FlowPanel.Name = "FlowPanel";
-            this.FlowPanel.Size = new System.Drawing.Size(913, 40);
+
+            this.FlowPanel.Size = new System.Drawing.Size(925, 40);
             this.FlowPanel.TabIndex = 8;
             // 
             // textBox1
@@ -222,7 +235,8 @@
             this.textBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.textBox1.Font = new System.Drawing.Font("Javanese Text", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textBox1.ForeColor = System.Drawing.SystemColors.Control;
-            this.textBox1.Location = new System.Drawing.Point(3, 0);
+
+            this.textBox1.Location = new System.Drawing.Point(15, 0);
             this.textBox1.Margin = new System.Windows.Forms.Padding(3, 0, 700, 0);
             this.textBox1.Name = "textBox1";
             this.textBox1.ReadOnly = true;
@@ -234,8 +248,9 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.Color.Fuchsia;
-            this.ClientSize = new System.Drawing.Size(913, 574);
+
+            this.BackColor = System.Drawing.Color.Coral;
+            this.ClientSize = new System.Drawing.Size(925, 581);
             this.Controls.Add(this.FlowPanel);
             this.Controls.Add(this.MapControl);
             this.Controls.Add(this.flowLayoutPanel1);
@@ -261,7 +276,7 @@
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.DataGridView DGVTankstellen;
         private System.Windows.Forms.TextBox TxtOrt1;
-        private System.Windows.Forms.TextBox txtOrt2;
+        private System.Windows.Forms.TextBox TxtOrt2;
         private System.Windows.Forms.ComboBox CbSpritsorte;
         private System.Windows.Forms.Button BtnSuche;
         private System.Windows.Forms.NumericUpDown NUDRadius;

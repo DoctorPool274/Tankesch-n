@@ -1,7 +1,14 @@
-﻿using System;
+using GMap.NET.WindowsForms;
+using GMap.NET.WindowsForms.Markers;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
-using System.Drawing;
+using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Drawing;
+
 
 namespace Tankeschön
 {
@@ -22,6 +29,14 @@ namespace Tankeschön
             FlowPanel.MouseDown += FlowPanel_MouseDown;
             FlowPanel.MouseMove += FlowPanel_MouseMove;
             FlowPanel.MouseUp += FlowPanel_MouseUp;
+
+            //Platzhaltertext 1
+            TxtOrt1.Enter += TxtOrt1_Enter;
+            TxtOrt1.Leave += TxtOrt1_Leave;
+            //Platzhaltertext 2
+            TxtOrt2.Enter += TxtOrt2_Enter;
+            TxtOrt2.Leave += TxtOrt2_Leave;
+
         }
         private void Tankeschön_Load(object sender, EventArgs e)
         {
@@ -39,7 +54,63 @@ namespace Tankeschön
 
             // Standardwert auswählen
             CbSpritsorte.SelectedIndex = 0;
+
+
+            //Platzhaltertext 1
+            TxtOrt1.Text = "Ort/PLZ eingeben";
+            TxtOrt1.ForeColor = Color.Gray; // Setze eine graue Farbe für den Hinweistext
+            // Stellt sicher, dass der Fokus nicht sofort auf das Textfeld geht
+            this.ActiveControl = null;
+
+            //Platzhaltertext 2
+            TxtOrt2.Text = "2.Ort/PLZ";
+            TxtOrt2.ForeColor = Color.Gray; // Setze eine graue Farbe für den Hinweistext
+            // Stellt sicher, dass der Fokus nicht sofort auf das Textfeld geht
+            this.ActiveControl = null;
+
         }
+
+        // Eingabe Ort/PLZ 1
+        private void TxtOrt1_Enter(object sender, EventArgs e)
+        {
+            if (TxtOrt1.Text == "Ort/PLZ eingeben")
+            {
+                TxtOrt1.Text = "";
+                TxtOrt1.ForeColor = Color.Black; // Setze die Farbe auf Schwarz für Benutzereingaben
+            }
+        }
+
+        // Verlassen Ort/PLZ1
+        private void TxtOrt1_Leave(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(TxtOrt1.Text))
+            {
+                TxtOrt1.Text = "Ort/PLZ eingeben";
+                TxtOrt1.ForeColor = Color.Gray; // Textfarbe auf Grau ändern
+            }
+        }
+
+        // Eingabe Ort/PLZ 2
+        private void TxtOrt2_Enter(object sender, EventArgs e)
+        {
+            if (TxtOrt2.Text == "2.Ort/PLZ")
+            {
+                TxtOrt2.Text = "";
+                TxtOrt2.ForeColor = Color.Black; // Setze die Farbe auf Schwarz für Benutzereingaben
+            }
+        }
+
+        // Verlassen Ort/PLZ 2
+        private void TxtOrt2_Leave(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(TxtOrt2.Text))
+            {
+                TxtOrt2.Text = "2.Ort/PLZ";
+                TxtOrt2.ForeColor = Color.Gray; // Textfarbe auf Grau ändern
+            }
+        }
+
+
         // Methoden für das Ziehen des Fensters
         private void FlowPanel_MouseDown(object sender, MouseEventArgs e)
         {
@@ -71,17 +142,41 @@ namespace Tankeschön
 
         private async void BtnSuche_Click(object sender, EventArgs e)
         {
+
+            string postleitzahl = TxtOrt1.Text;
+            if (string.IsNullOrWhiteSpace(postleitzahl))
+            {
+                MessageBox.Show("Bitte eine gültige Postleitzahl eingeben.");
+            }
             string ort1 = TxtOrt1.Text == "Ort/PLZ" ? null : TxtOrt1.Text;
             string ort2 = txtOrt2.Text == "Ort/PLZ" ? null : txtOrt2.Text;
 
             if (string.IsNullOrWhiteSpace(ort1) && string.IsNullOrWhiteSpace(ort2))
             {
                 MessageBox.Show("Mindestens ein Feld muss Ort oder PLZ beinhalten");
+
                 return;
             }
 
             try
             {
+
+                var (latitude, longitude) = await apiService.GetCoordinatesAsync(postleitzahl);
+                var stations = await apiService.GetTankstellenAsync(latitude, longitude, (double)NUDRadius.Value);
+
+                if (stations.Count == 0)
+                {
+                    MessageBox.Show("Keine Tankstelle im Umkreis gefunden.");
+                    return;
+                }
+
+                DGVTankstellen.DataSource = null;
+                DGVTankstellen.AutoGenerateColumns = true;
+                DGVTankstellen.DataSource = stations;
+
+                string selectedFuel = CbSpritsorte.SelectedItem.ToString();
+                mapHelper.UpdateMap(latitude, longitude, stations, selectedFuel);
+                
                 List<Tankstelle> allStations = new List<Tankstelle>();
                 double? lat1 = null, lng1 = null, lat2 = null, lng2 = null;
                 // Ergebnisse für Ort 1
@@ -143,6 +238,11 @@ namespace Tankeschön
             this.WindowState = FormWindowState.Minimized;
         }
         private void NUDRadius_ValueChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void TxtOrt1_TextChanged(object sender, EventArgs e)
         {
 
         }
