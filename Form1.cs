@@ -13,19 +13,28 @@ namespace Tankeschön
 {
     public partial class Tankeschön : Form
     {
+        private readonly ApiService apiService;
+        private readonly MapHelper mapHelper;
         // Variablen für das Ziehen des Fensters
         private bool isDragging = false;
         private Point dragStartPoint;
-
         public Tankeschön()
         {
             InitializeComponent();
+            apiService = new ApiService();
+            mapHelper = new MapHelper(MapControl);
+
             // Ereignisse für FlowPanel hinzufügen
             FlowPanel.MouseDown += FlowPanel_MouseDown;
             FlowPanel.MouseMove += FlowPanel_MouseMove;
             FlowPanel.MouseUp += FlowPanel_MouseUp;
+            //Platzhaltertext 1
+            TxtOrt1.Enter += TxtOrt1_Enter;
+            TxtOrt1.Leave += TxtOrt1_Leave;
+            //Platzhaltertext 2
+            TxtOrt2.Enter += TxtOrt2_Enter;
+            TxtOrt2.Leave += TxtOrt2_Leave;
         }
-
         private void Tankeschön_Load(object sender, EventArgs e)
         {
             // Initialisierungen beim Laden der Form
@@ -42,143 +51,59 @@ namespace Tankeschön
 
             // Standardwert auswählen
             CbSpritsorte.SelectedIndex = 0;
+
+            //Platzhaltertext 1
+            TxtOrt1.Text = "Ort/PLZ eingeben";
+            TxtOrt1.ForeColor = Color.Gray; // Setze eine graue Farbe für den Hinweistext
+            // Stellt sicher, dass der Fokus nicht sofort auf das Textfeld geht
+            this.ActiveControl = null;
+
+            //Platzhaltertext 2
+            TxtOrt2.Text = "2.Ort/PLZ";
+            TxtOrt2.ForeColor = Color.Gray; // Setze eine graue Farbe für den Hinweistext
+            // Stellt sicher, dass der Fokus nicht sofort auf das Textfeld geht
+            this.ActiveControl = null;
+
         }
 
-        private async void BtnSuche_Click(object sender, EventArgs e)
+        // Eingabe Ort/PLZ 1
+        private void TxtOrt1_Enter(object sender, EventArgs e)
         {
-            string postleitzahl = TxtOrt1.Text;
-            if (string.IsNullOrWhiteSpace(postleitzahl))
+            if (TxtOrt1.Text == "Ort/PLZ eingeben")
             {
-                MessageBox.Show("Bitte eine gültige Postleitzahl eingeben.");
-                return;
-            }
-
-            string geoApiKey = "d200da1ed61e4a7ba9c558ae6e592ae1";
-            string tankerkoenigApiKey = "75b692ad-15c5-3243-0c51-266f96bf1b56";
-
-            string geoUrl = $"https://api.opencagedata.com/geocode/v1/json?q={postleitzahl}&key={geoApiKey}";
-
-            using (HttpClient client = new HttpClient())
-            {
-                try
-                {
-                    // Geokoordinaten abrufen
-                    string geoResponse = await client.GetStringAsync(geoUrl);
-                    JObject geoJson = JObject.Parse(geoResponse);
-
-                    double latitude = (double)geoJson["results"][0]["geometry"]["lat"];
-                    double longitude = (double)geoJson["results"][0]["geometry"]["lng"];
-
-                    // Tankstellen-Daten abrufen
-                    string tankerkoenigUrl = $"https://creativecommons.tankerkoenig.de/json/list.php?lat={latitude}&lng={longitude}&rad={NUDRadius.Value}&type=all&apikey={tankerkoenigApiKey}";
-                    string tankerResponse = await client.GetStringAsync(tankerkoenigUrl);
-                    Console.WriteLine(tankerResponse);  // Debug-Ausgabe der API-Antwort
-                    JObject tankerJson = JObject.Parse(tankerResponse);
-                    //MessageBox.Show(tankerkoenigUrl);
-                    if (tankerJson["ok"].ToObject<bool>())
-                    {
-                        if (tankerJson["stations"] == null || !tankerJson["stations"].Any())
-                        {
-                            MessageBox.Show("Keine Tankstelle im Umkreis");
-                            return;
-                        }
-                        else
-                        {
-                            // JSON zu Liste von Tankstellen umwandeln
-                            var stations = tankerJson["stations"].Select(station => new Tankstelle
-                            {
-                                Name = station["name"].ToString(),
-                                Address = station["street"].ToString(),
-                                Latitude = (double)station["lat"],
-                                Longitude = (double)station["lng"],
-                                Diesel = station["diesel"]?.Type == JTokenType.Null ? 0.0 : (double)station["diesel"],
-                                E5 = station["e5"]?.Type == JTokenType.Null ? 0.0 : (double)station["e5"],
-                                E10 = station["e10"]?.Type == JTokenType.Null ? 0.0 : (double)station["e10"]
-                            }).ToList();
-
-                            // DEBUG: Überprüfe die API-Daten
-                            foreach (var station in stations)
-                            {
-                                Console.WriteLine($"Name: {station.Name}, Latitude: {station.Latitude}, Longitude: {station.Longitude}, Diesel: {station.Diesel}, E5: {station.E5}, E10: {station.E10}");
-                            }
-
-                            // Tankstellen in DataGridView anzeigen
-                            DGVTankstellen.DataSource = null;
-                            DGVTankstellen.AutoGenerateColumns = true;
-                            DGVTankstellen.DataSource = stations;
-
-                            // Karte aktualisieren
-                            UpdateMap(latitude, longitude, stations);
-                        }
-                    }
-                    else
-                    {
-                        MessageBox.Show("Fehler beim Abrufen der Tankstellen-Daten.");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Fehler: {ex.Message}");
-                }
+                TxtOrt1.Text = "";
+                TxtOrt1.ForeColor = Color.Black; // Setze die Farbe auf Schwarz für Benutzereingaben
             }
         }
 
-        private void UpdateMap(double latitude, double longitude, List<Tankstelle> stations)
+        // Verlassen Ort/PLZ1
+        private void TxtOrt1_Leave(object sender, EventArgs e)
         {
-            MapControl.Position = new GMap.NET.PointLatLng(latitude, longitude);
-            MapControl.Overlays.Clear();
-
-            var markers = new GMapOverlay("markers");
-
-            // Holen der ausgewählten Spritsorte
-            string selectedFuel = CbSpritsorte.SelectedItem.ToString();
-
-            // Tankstellen nur mit der ausgewählten Spritsorte anzeigen
-            foreach (var station in stations)
+            if (string.IsNullOrWhiteSpace(TxtOrt1.Text))
             {
-                double fuelPrice = 0.0;
-                string toolTipText = $"{station.Name}\n";
-
-                // Abhängig von der ausgewählten Spritsorte den Preis zuweisen
-                switch (selectedFuel)
-                {
-                    case "Diesel":
-                        fuelPrice = station.Diesel;
-                        toolTipText += $"Diesel: {fuelPrice:F2} €/L";
-                        break;
-                    case "E5":
-                        fuelPrice = station.E5;
-                        toolTipText += $"E5: {fuelPrice:F2} €/L";
-                        break;
-                    case "E10":
-                        fuelPrice = station.E10;
-                        toolTipText += $"E10: {fuelPrice:F2} €/L";
-                        break;
-                }
-
-                // Wenn der Preis > 0 ist, Marker hinzufügen
-                if (fuelPrice > 0)
-                {
-                    var marker = new GMarkerGoogle(
-                        new GMap.NET.PointLatLng(station.Latitude, station.Longitude),
-                        GMarkerGoogleType.red_dot);
-
-                    marker.ToolTipText = toolTipText;
-                    markers.Markers.Add(marker);
-                }
+                TxtOrt1.Text = "Ort/PLZ eingeben";
+                TxtOrt1.ForeColor = Color.Gray; // Textfarbe auf Grau ändern
             }
-
-            MapControl.Overlays.Add(markers);
         }
 
-        private void button1_Click_1(object sender, EventArgs e)
+        // Eingabe Ort/PLZ 2
+        private void TxtOrt2_Enter(object sender, EventArgs e)
         {
-            this.Close();
+            if (TxtOrt2.Text == "2.Ort/PLZ")
+            {
+                TxtOrt2.Text = "";
+                TxtOrt2.ForeColor = Color.Black; // Setze die Farbe auf Schwarz für Benutzereingaben
+            }
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        // Verlassen Ort/PLZ 2
+        private void TxtOrt2_Leave(object sender, EventArgs e)
         {
-            this.WindowState = FormWindowState.Minimized;
+            if (string.IsNullOrWhiteSpace(TxtOrt2.Text))
+            {
+                TxtOrt2.Text = "2.Ort/PLZ";
+                TxtOrt2.ForeColor = Color.Gray; // Textfarbe auf Grau ändern
+            }
         }
 
         // Methoden für das Ziehen des Fensters
@@ -210,7 +135,53 @@ namespace Tankeschön
             }
         }
 
+        private async void BtnSuche_Click(object sender, EventArgs e)
+        {
+            string postleitzahl = TxtOrt1.Text;
+            if (string.IsNullOrWhiteSpace(postleitzahl))
+            {
+                MessageBox.Show("Bitte eine gültige Postleitzahl eingeben.");
+                return;
+            }
+
+            try
+            {
+                var (latitude, longitude) = await apiService.GetCoordinatesAsync(postleitzahl);
+                var stations = await apiService.GetTankstellenAsync(latitude, longitude, (double)NUDRadius.Value);
+
+                if (stations.Count == 0)
+                {
+                    MessageBox.Show("Keine Tankstelle im Umkreis gefunden.");
+                    return;
+                }
+
+                DGVTankstellen.DataSource = null;
+                DGVTankstellen.AutoGenerateColumns = true;
+                DGVTankstellen.DataSource = stations;
+
+                string selectedFuel = CbSpritsorte.SelectedItem.ToString();
+                mapHelper.UpdateMap(latitude, longitude, stations, selectedFuel);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Fehler: {ex.Message}");
+            }
+        }
+        private void BtnSchließen_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void BtnMin_Click(object sender, EventArgs e)
+        {
+            this.WindowState = FormWindowState.Minimized;
+        }
         private void NUDRadius_ValueChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void TxtOrt1_TextChanged(object sender, EventArgs e)
         {
 
         }
