@@ -1,13 +1,7 @@
-﻿using GMap.NET.WindowsForms;
-using GMap.NET.WindowsForms.Markers;
-using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using System.Drawing;
+using System.Windows.Forms;
 
 namespace Tankeschön
 {
@@ -80,7 +74,7 @@ namespace Tankeschön
             string ort1 = TxtOrt1.Text == "Ort/PLZ" ? null : TxtOrt1.Text;
             string ort2 = txtOrt2.Text == "Ort/PLZ" ? null : txtOrt2.Text;
 
-            if(string.IsNullOrWhiteSpace(ort1) && string.IsNullOrWhiteSpace(ort2))
+            if (string.IsNullOrWhiteSpace(ort1) && string.IsNullOrWhiteSpace(ort2))
             {
                 MessageBox.Show("Mindestens ein Feld muss Ort oder PLZ beinhalten");
                 return;

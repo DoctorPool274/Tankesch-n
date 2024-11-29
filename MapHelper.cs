@@ -1,10 +1,7 @@
-﻿using GMap.NET.WindowsForms.Markers;
-using GMap.NET.WindowsForms;
+﻿using GMap.NET.WindowsForms;
+using GMap.NET.WindowsForms.Markers;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Tankeschön
 {
@@ -66,9 +63,9 @@ namespace Tankeschön
             mapControl.Overlays.Clear();
             var markers = new GMapOverlay("markers");
 
-            if (lat1.HasValue &&  lng1.HasValue)
+            if (lat1.HasValue && lng1.HasValue)
             {
-                var marker1 = new GMarkerGoogle(new GMap.NET.PointLatLng (lat1.Value, lng1.Value),
+                var marker1 = new GMarkerGoogle(new GMap.NET.PointLatLng(lat1.Value, lng1.Value),
                     GMarkerGoogleType.blue_dot);
                 {
                     ToolTipText = "Ort 1";
@@ -85,7 +82,7 @@ namespace Tankeschön
                 }
                 markers.Markers.Add(marker2);
             }
-            
+
             foreach (var station in stations)
             {
                 double fuelPrice = 0.0;

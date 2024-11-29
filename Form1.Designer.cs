@@ -52,7 +52,7 @@
             // flowLayoutPanel1
             // 
             this.flowLayoutPanel1.AllowDrop = true;
-            this.flowLayoutPanel1.BackColor = System.Drawing.Color.Coral;
+            this.flowLayoutPanel1.BackColor = System.Drawing.Color.SpringGreen;
             this.flowLayoutPanel1.Controls.Add(this.TxtOrt1);
             this.flowLayoutPanel1.Controls.Add(this.txtOrt2);
             this.flowLayoutPanel1.Controls.Add(this.CbSpritsorte);
@@ -234,7 +234,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.Color.Coral;
+            this.BackColor = System.Drawing.Color.Fuchsia;
             this.ClientSize = new System.Drawing.Size(913, 574);
             this.Controls.Add(this.FlowPanel);
             this.Controls.Add(this.MapControl);
