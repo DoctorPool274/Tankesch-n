@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.SqlTypes;
 
+
 namespace Tankeschön
 {
     public class ApiService
@@ -16,7 +17,9 @@ namespace Tankeschön
         private readonly string geoApiKey = "d200da1ed61e4a7ba9c558ae6e592ae1";
         private readonly string tankerkoenigApiKey = "75b692ad-15c5-3243-0c51-266f96bf1b56";
 
+
         // Methode zur Abfrage von Koordinaten basierend auf der Postleitzahl
+
         public async Task<(double latitude, double longitude)> GetCoordinatesAsync(string postleitzahl)
         {
             string geoUrl = $"https://api.opencagedata.com/geocode/v1/json?q={postleitzahl}&key={geoApiKey}";
@@ -26,8 +29,10 @@ namespace Tankeschön
                 string geoResponse = await client.GetStringAsync(geoUrl);
                 JObject geoJson = JObject.Parse(geoResponse);
 
+
                 if (geoJson["results"] == null || !geoJson["results"].Any())
                     throw new Exception("Keine gültigen Geodaten erhalten.");
+
 
                 double latitude = (double)geoJson["results"][0]["geometry"]["lat"];
                 double longitude = (double)geoJson["results"][0]["geometry"]["lng"];
@@ -35,7 +40,9 @@ namespace Tankeschön
             }
         }
 
+
         // Methode zur Abfrage der Tankstellen
+
         public async Task<List<Tankstelle>> GetTankstellenAsync(double latitude, double longitude, double radius)
         {
             string tankerkoenigUrl = $"https://creativecommons.tankerkoenig.de/json/list.php?lat={latitude}&lng={longitude}&rad={radius}&type=all&apikey={tankerkoenigApiKey}";
@@ -44,8 +51,10 @@ namespace Tankeschön
             {
                 string tankerResponse = await client.GetStringAsync(tankerkoenigUrl);
 
+
                 // JSON speichern und in CSV umwandeln
                 await SaveJsonAndConvertToCsvAsync(tankerResponse);
+
 
                 JObject tankerJson = JObject.Parse(tankerResponse);
 
@@ -53,10 +62,12 @@ namespace Tankeschön
                 {
                     var stations = tankerJson["stations"].Select(station => new Tankstelle
                     {
+
                         Name = station["name"]?.ToString() ?? "Unbekannt",
                         Address = station["street"]?.ToString() ?? "Keine Adresse",
                         Latitude = (double?)station["lat"] ?? 0,
                         Longitude = (double?)station["lng"] ?? 0,
+
                         Diesel = station["diesel"]?.Type == JTokenType.Null ? 0.0 : (double)station["diesel"],
                         E5 = station["e5"]?.Type == JTokenType.Null ? 0.0 : (double)station["e5"],
                         E10 = station["e10"]?.Type == JTokenType.Null ? 0.0 : (double)station["e10"]
@@ -68,6 +79,7 @@ namespace Tankeschön
                 return new List<Tankstelle>();
             }
         }
+
 
         // Methode zum Speichern der JSON-Antwort und Erstellen einer CSV-Datei
         private async Task SaveJsonAndConvertToCsvAsync(string jsonResponse)
