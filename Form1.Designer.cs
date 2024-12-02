@@ -31,7 +31,6 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Tankeschön));
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.TxtOrt1 = new System.Windows.Forms.TextBox();
-
             this.TxtOrt2 = new System.Windows.Forms.TextBox();
             this.CbSpritsorte = new System.Windows.Forms.ComboBox();
             this.NUDRadius = new System.Windows.Forms.NumericUpDown();
@@ -53,7 +52,6 @@
             // flowLayoutPanel1
             // 
             this.flowLayoutPanel1.AllowDrop = true;
-
             this.flowLayoutPanel1.BackColor = System.Drawing.Color.Coral;
             this.flowLayoutPanel1.Controls.Add(this.TxtOrt1);
             this.flowLayoutPanel1.Controls.Add(this.TxtOrt2);
@@ -62,6 +60,7 @@
             this.flowLayoutPanel1.Controls.Add(this.BtnSuche);
             this.flowLayoutPanel1.Controls.Add(this.pictureBox1);
             this.flowLayoutPanel1.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(2);
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 32);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             this.flowLayoutPanel1.Size = new System.Drawing.Size(144, 552);
@@ -83,20 +82,22 @@
             this.TxtOrt2.Name = "TxtOrt2";
             this.TxtOrt2.Size = new System.Drawing.Size(133, 22);
             this.TxtOrt2.TabIndex = 1;
-
             // 
             // CbSpritsorte
             // 
             this.CbSpritsorte.FormattingEnabled = true;
-            this.CbSpritsorte.Location = new System.Drawing.Point(3, 81);
+            this.CbSpritsorte.Location = new System.Drawing.Point(2, 93);
+            this.CbSpritsorte.Margin = new System.Windows.Forms.Padding(2);
             this.CbSpritsorte.Name = "CbSpritsorte";
             this.CbSpritsorte.Size = new System.Drawing.Size(133, 24);
             this.CbSpritsorte.TabIndex = 4;
-
+            this.CbSpritsorte.SelectedIndexChanged += new System.EventHandler(this.CbSpritsorte_SelectedIndexChanged);
             // 
             // NUDRadius
             // 
             this.NUDRadius.Location = new System.Drawing.Point(3, 111);
+            this.NUDRadius.Margin = new System.Windows.Forms.Padding(2);
+
             this.NUDRadius.Maximum = new decimal(new int[] {
             50,
             0,
@@ -125,11 +126,10 @@
             this.BtnSuche.Font = new System.Drawing.Font("Ink Free", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.BtnSuche.ForeColor = System.Drawing.Color.Black;
             this.BtnSuche.Location = new System.Drawing.Point(3, 139);
+            this.BtnSuche.Margin = new System.Windows.Forms.Padding(2);
             this.BtnSuche.Name = "BtnSuche";
             this.BtnSuche.Size = new System.Drawing.Size(133, 51);
-
             this.BtnSuche.TabIndex = 0;
-
             this.BtnSuche.Text = "Sparen";
             this.BtnSuche.UseVisualStyleBackColor = false;
             this.BtnSuche.Click += new System.EventHandler(this.BtnSuche_Click);
@@ -147,11 +147,19 @@
             // 
             // DGVTankstellen
             // 
+            this.DGVTankstellen.AllowUserToAddRows = false;
+            this.DGVTankstellen.AllowUserToDeleteRows = false;
+            this.DGVTankstellen.AllowUserToResizeColumns = false;
+            this.DGVTankstellen.AllowUserToResizeRows = false;
+            this.DGVTankstellen.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.DGVTankstellen.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None;
             this.DGVTankstellen.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.DGVTankstellen.Location = new System.Drawing.Point(152, 376);
             this.DGVTankstellen.Name = "DGVTankstellen";
+            this.DGVTankstellen.RowHeadersVisible = false;
             this.DGVTankstellen.RowHeadersWidth = 51;
             this.DGVTankstellen.RowTemplate.Height = 24;
+            this.DGVTankstellen.ShowEditingIcon = false;
             this.DGVTankstellen.Size = new System.Drawing.Size(760, 192);
             this.DGVTankstellen.TabIndex = 6;
             // 
@@ -165,6 +173,7 @@
             this.MapControl.HelperLineOption = GMap.NET.WindowsForms.HelperLineOptions.DontShow;
             this.MapControl.LevelsKeepInMemmory = 5;
             this.MapControl.Location = new System.Drawing.Point(152, 56);
+            this.MapControl.Margin = new System.Windows.Forms.Padding(2);
             this.MapControl.MarkersEnabled = true;
             this.MapControl.MaxZoom = 2;
             this.MapControl.MinZoom = 2;
@@ -178,7 +187,9 @@
             this.MapControl.ScaleMode = GMap.NET.WindowsForms.ScaleModes.Integer;
             this.MapControl.SelectedAreaFillColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(65)))), ((int)(((byte)(105)))), ((int)(((byte)(225)))));
             this.MapControl.ShowTileGridLines = false;
+
             this.MapControl.Size = new System.Drawing.Size(760, 312);
+
             this.MapControl.TabIndex = 7;
             this.MapControl.Zoom = 0D;
             // 
@@ -188,9 +199,8 @@
             this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button1.ForeColor = System.Drawing.SystemColors.Control;
-
             this.button1.Location = new System.Drawing.Point(885, 3);
-
+            this.button1.Margin = new System.Windows.Forms.Padding(2);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(37, 26);
             this.button1.TabIndex = 0;
@@ -204,9 +214,8 @@
             this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button2.ForeColor = System.Drawing.SystemColors.Control;
-
             this.button2.Location = new System.Drawing.Point(842, 3);
-
+            this.button2.Margin = new System.Windows.Forms.Padding(2);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(37, 26);
             this.button2.TabIndex = 1;
@@ -224,7 +233,7 @@
             this.FlowPanel.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
             this.FlowPanel.Location = new System.Drawing.Point(0, 0);
             this.FlowPanel.Name = "FlowPanel";
-
+            this.FlowPanel.Margin = new System.Windows.Forms.Padding(2);
             this.FlowPanel.Size = new System.Drawing.Size(925, 40);
             this.FlowPanel.TabIndex = 8;
             // 
@@ -235,7 +244,6 @@
             this.textBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.textBox1.Font = new System.Drawing.Font("Javanese Text", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textBox1.ForeColor = System.Drawing.SystemColors.Control;
-
             this.textBox1.Location = new System.Drawing.Point(15, 0);
             this.textBox1.Margin = new System.Windows.Forms.Padding(3, 0, 700, 0);
             this.textBox1.Name = "textBox1";
@@ -248,7 +256,6 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-
             this.BackColor = System.Drawing.Color.Coral;
             this.ClientSize = new System.Drawing.Size(925, 581);
             this.Controls.Add(this.FlowPanel);
@@ -257,6 +264,7 @@
             this.Controls.Add(this.DGVTankstellen);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Tankeschön";
             this.Text = "Tankeschön";
             this.Load += new System.EventHandler(this.Tankeschön_Load);

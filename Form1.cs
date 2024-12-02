@@ -1,3 +1,4 @@
+
 using GMap.NET.WindowsForms;
 using GMap.NET.WindowsForms.Markers;
 using Newtonsoft.Json.Linq;
@@ -8,6 +9,10 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing;
+
+using System.Security.Cryptography.X509Certificates;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using static Tankeschön.herreber;
 
 
 namespace Tankeschön
@@ -29,7 +34,8 @@ namespace Tankeschön
             FlowPanel.MouseDown += FlowPanel_MouseDown;
             FlowPanel.MouseMove += FlowPanel_MouseMove;
             FlowPanel.MouseUp += FlowPanel_MouseUp;
-
+            DGVTankstellen.BorderStyle = BorderStyle.None;
+            
             //Platzhaltertext 1
             TxtOrt1.Enter += TxtOrt1_Enter;
             TxtOrt1.Leave += TxtOrt1_Leave;
@@ -55,6 +61,7 @@ namespace Tankeschön
             // Standardwert auswählen
             CbSpritsorte.SelectedIndex = 0;
 
+            string spritsorte = CbSpritsorte.SelectedItem.ToString();
 
             //Platzhaltertext 1
             TxtOrt1.Text = "Ort/PLZ eingeben";
@@ -110,7 +117,6 @@ namespace Tankeschön
             }
         }
 
-
         // Methoden für das Ziehen des Fensters
         private void FlowPanel_MouseDown(object sender, MouseEventArgs e)
         {
@@ -147,6 +153,7 @@ namespace Tankeschön
             if (string.IsNullOrWhiteSpace(postleitzahl))
             {
                 MessageBox.Show("Bitte eine gültige Postleitzahl eingeben.");
+
             }
             string ort1 = TxtOrt1.Text == "Ort/PLZ" ? null : TxtOrt1.Text;
             string ort2 = txtOrt2.Text == "Ort/PLZ" ? null : txtOrt2.Text;
@@ -155,26 +162,67 @@ namespace Tankeschön
             {
                 MessageBox.Show("Mindestens ein Feld muss Ort oder PLZ beinhalten");
 
+
                 return;
             }
 
             try
             {
-
                 var (latitude, longitude) = await apiService.GetCoordinatesAsync(postleitzahl);
                 var stations = await apiService.GetTankstellenAsync(latitude, longitude, (double)NUDRadius.Value);
-
+                
                 if (stations.Count == 0)
                 {
                     MessageBox.Show("Keine Tankstelle im Umkreis gefunden.");
                     return;
                 }
 
-                DGVTankstellen.DataSource = null;
-                DGVTankstellen.AutoGenerateColumns = true;
-                DGVTankstellen.DataSource = stations;
-
                 string selectedFuel = CbSpritsorte.SelectedItem.ToString();
+                if(SharedData.SelectedComboBoxValue == "Diesel")
+                {
+                    DGVTankstellen.DataSource = null;
+                    DGVTankstellen.AutoGenerateColumns = true;
+
+                    DGVTankstellen.DataSource = stations;
+                    DGVTankstellen.Columns[2].Visible = false;
+                    DGVTankstellen.Columns[3].Visible = false;
+                    DGVTankstellen.Columns[5].Visible = false;
+                    DGVTankstellen.Columns[6].Visible = false;
+                    DGVTankstellen.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                    DGVTankstellen.BorderStyle = BorderStyle.None;
+                    DGVTankstellen.ClearSelection();
+                }
+                else if(SharedData.SelectedComboBoxValue =="E5")
+                {
+                    DGVTankstellen.DataSource = null;
+                    DGVTankstellen.AutoGenerateColumns = true;
+                    
+                    DGVTankstellen.DataSource = stations;
+                    
+                    DGVTankstellen.Columns[2].Visible = false;
+                    DGVTankstellen.Columns[3].Visible = false;
+                    DGVTankstellen.Columns[4].Visible = false;
+                    DGVTankstellen.Columns[6].Visible = false;
+                    DGVTankstellen.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                    DGVTankstellen.BorderStyle = BorderStyle.None;
+                    DGVTankstellen.ClearSelection();
+
+
+                }
+                else
+                {
+                    DGVTankstellen.DataSource = null;
+                    DGVTankstellen.AutoGenerateColumns = true;
+
+                    DGVTankstellen.DataSource = stations;
+                    DGVTankstellen.Columns[2].Visible = false;
+                    DGVTankstellen.Columns[3].Visible = false;
+                    DGVTankstellen.Columns[4].Visible = false;
+                    DGVTankstellen.Columns[5].Visible = false;
+                    DGVTankstellen.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                    DGVTankstellen.BorderStyle = BorderStyle.None;
+                    DGVTankstellen.ClearSelection();
+                }
                 mapHelper.UpdateMap(latitude, longitude, stations, selectedFuel);
                 
                 List<Tankstelle> allStations = new List<Tankstelle>();
@@ -240,6 +288,11 @@ namespace Tankeschön
         private void NUDRadius_ValueChanged(object sender, EventArgs e)
         {
 
+        }
+
+        public void CbSpritsorte_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            SharedData.SelectedComboBoxValue = CbSpritsorte.SelectedItem?.ToString();
         }
 
         private void TxtOrt1_TextChanged(object sender, EventArgs e)

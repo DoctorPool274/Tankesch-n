@@ -1,4 +1,3 @@
-
 using GMap.NET.WindowsForms.Markers;
 using GMap.NET.WindowsForms;
 using System;
@@ -7,14 +6,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-
 namespace Tankeschön
 {
     public class MapHelper
     {
         private readonly GMapControl mapControl;
         private string ToolTipText;
-
 
         public MapHelper(GMapControl mapControl)
         {
@@ -54,8 +51,6 @@ namespace Tankeschön
                     var marker = new GMarkerGoogle(
                         new GMap.NET.PointLatLng(station.Latitude, station.Longitude),
                         GMarkerGoogleType.red_dot);
-
-
                     marker.ToolTipText = toolTipText;
                     markers.Markers.Add(marker);
                 }
@@ -63,7 +58,7 @@ namespace Tankeschön
 
             mapControl.Overlays.Add(markers);
         }
-
+      
         public void UpdateMap2Orte(double? lat1, double? lng1, double? lat2, double? lng2,
                                    List<Tankstelle> stations, string selectedFuel)
         {
